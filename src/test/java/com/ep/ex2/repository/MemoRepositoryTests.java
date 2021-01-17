@@ -18,8 +18,10 @@ import java.util.stream.IntStream;
 @SpringBootTest
 public class MemoRepositoryTests {
 
+    // 리포지토리를 주입한다.
     @Autowired
     MemoRepository memoRepository;
+
 
     @Test
     public void testClass(){
@@ -50,6 +52,7 @@ public class MemoRepositoryTests {
         }
     }
 
+    // getOne()은 실제 객체가 필요한 순간(사용이 되는 순간)에서야 쿼리가 날라간다.
     @Transactional
     @Test
     public void testSelect2(){
@@ -85,6 +88,7 @@ public class MemoRepositoryTests {
         // 1페이지 10개
         Pageable pageable = PageRequest.of(0,10);
 
+        // pagable을
         Page<Memo> result = memoRepository.findAll(pageable);
         
         System.out.println(result);
@@ -115,6 +119,7 @@ public class MemoRepositoryTests {
 
         Sort sort1 = Sort.by("mno").descending();
         Sort sort2 = Sort.by("memoText").ascending();
+        // 우선순위가 앞에 온다.
         Sort sortAll = sort1.and(sort2); // and를 이용한 연결
 
         Pageable pageable = PageRequest.of(0,10,sortAll); // 결합된 정렬 조건 사용
@@ -148,6 +153,9 @@ public class MemoRepositoryTests {
 
     }
 
+    // delete는 기본이 롤백처리이다.
+    // 실제 개발에서는 deleteBy는 많이 사용하지 않는다. 왜냐하면 객체를 하나씩 삭제하기 때문이다.
+    // 여러 작업이 동시에 이뤄지기 때문에 Transaction이 꼭 필요하다.
     @Commit
     @Transactional
     @Test
